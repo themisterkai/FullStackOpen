@@ -19,12 +19,6 @@ function App() {
       country.name.common.toLowerCase().includes(e.target.value.toLowerCase())
     );
     setFiltered(list);
-    // if (list.length > 10) {
-    //   setError('Too many matches, specify another filter');
-    // } else {
-    //   setError(null);
-    // }
-    console.log(list, list.length);
   };
 
   const showCountryHandler = id => {

@@ -31,7 +31,7 @@ const Countries = ({
       {filteredCountries.map(country => (
         <div key={country.cca2}>
           <div>
-            {country.name.common}
+            {country.name.common}{' '}
             <button
               onClick={() => {
                 showCountryHandler(country.cca2);
