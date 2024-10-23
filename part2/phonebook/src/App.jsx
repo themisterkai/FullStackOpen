@@ -1,20 +1,17 @@
 import { useState, useEffect } from 'react';
-import axios from 'axios';
 import Filter from './components/Filter';
 import PersonForm from './components/PersonForm';
 import Persons from './components/Persons';
+import phonebook from './services/phonebook';
 
 const App = () => {
   const [persons, setPersons] = useState([]);
   const [newName, setNewName] = useState('');
   const [newPhone, setNewPhone] = useState('');
   const [filter, setFilter] = useState('');
-  const [latestID, setLatestID] = useState(5);
 
   useEffect(() => {
-    axios
-      .get('http://localhost:3001/persons')
-      .then(response => setPersons(response.data));
+    phonebook.getAll().then(data => setPersons(data));
   }, []);
 
   const addNameHandler = e => {
@@ -24,18 +21,49 @@ const App = () => {
       alert('please enter a valid name or phone number');
       return;
     }
-    const isNameUnique = persons.find(
+    const newPerson = { name: newName, number: newPhone };
+
+    const existingPerson = persons.find(
       person => person.name.toLowerCase() === newName.toLowerCase()
     );
-    if (isNameUnique == null) {
-      setPersons([
-        ...persons,
-        { name: newName, number: newPhone, id: latestID },
-      ]);
-      setLatestID(latestID + 1);
+
+    // Case where the person doesn't already exist in the phonebook
+    // we add the person
+    if (existingPerson == null) {
+      phonebook
+        .addPerson(newPerson)
+        .then(data => setPersons([...persons, data]));
+      setNewName('');
+      setNewPhone('');
     } else {
-      alert(`${newName} is already added to the phonebook`);
+      // For cases where the person is already in the phonebook, we ask the user
+      // for confirmation if they want to update the person's record
+      const userConfirmed = confirm(
+        `${newName} is already added to the phonebook, replace the old number with new one?`
+      );
+      // return if the user doesn't want to replace the current record
+      if (!userConfirmed) {
+        return;
+      }
+      // Update the person's record if the user confirms.
+      phonebook
+        .updatePerson(existingPerson.id, newPerson)
+        .then(data =>
+          setPersons(
+            persons.map(person => (person.id === data.id ? data : person))
+          )
+        );
+      setNewName('');
+      setNewPhone('');
     }
+  };
+
+  const deletePerson = id => {
+    phonebook.deletePerson(id).then(data => {
+      console.log('in delete', data);
+      const afterDelete = persons.filter(person => person.id !== id);
+      setPersons(afterDelete);
+    });
   };
 
   const filteredList =
@@ -58,7 +86,7 @@ const App = () => {
         phoneOnChange={e => setNewPhone(e.target.value)}
       />
       <h2>Numbers</h2>
-      <Persons persons={filteredList} />
+      <Persons persons={filteredList} deletePersonHandler={deletePerson} />
     </div>
   );
 };
