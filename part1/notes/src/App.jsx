@@ -8,7 +8,7 @@ const App = () => {
   const [notes, setNotes] = useState([]);
   const [newNote, setNewNote] = useState('');
   const [showAll, setShowAll] = useState(true);
-  const [errorMessage, setErrorMessage] = useState('some error happened...');
+  const [errorMessage, setErrorMessage] = useState('');
 
   useEffect(() => {
     noteService.getAll().then(initialNotes => {
@@ -49,8 +49,22 @@ const App = () => {
       });
   };
 
+  const deleteNoteHandler = id => {
+    noteService
+      .del(id)
+      .then(res => {
+        setNotes(notes.filter(notes => notes.id !== id));
+      })
+      .catch(error => {
+        setErrorMessage(`Note was already removed from server`);
+        setTimeout(() => {
+          setErrorMessage(null);
+        }, 5000);
+        setNotes(notes.filter(n => n.id !== id));
+      });
+  };
+
   const handleNoteChange = event => {
-    console.log(event.target.value);
     setNewNote(event.target.value);
   };
   const notesToShow = showAll
@@ -60,7 +74,7 @@ const App = () => {
   return (
     <div>
       <h1>Notes</h1>
-      <Notification message={errorMessage} />
+      {errorMessage !== '' && <Notification message={errorMessage} />}
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
@@ -71,7 +85,8 @@ const App = () => {
           <Note
             key={note.id}
             note={note}
-            toggleImportance={() => toggleImportanceOf(note.id)}
+            toggleImportance={toggleImportanceOf}
+            deleteNoteHandler={deleteNoteHandler}
           />
         ))}
       </ul>
