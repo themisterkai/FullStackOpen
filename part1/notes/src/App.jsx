@@ -26,6 +26,14 @@ const App = () => {
     noteService.create(noteObject).then(newNote => {
       setNotes(notes.concat(newNote));
       setNewNote('');
+    }).catch(error => {
+      console.log('error: ', error)
+      setErrorMessage(
+        `${error.response.data.error}`
+      );
+      setTimeout(() => {
+        setErrorMessage(null);
+      }, 5000);
     });
   };
 
