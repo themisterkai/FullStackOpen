@@ -20,6 +20,15 @@ const App = () => {
     });
   }, []);
 
+  useEffect(() => {
+    const loggedUserJSON = window.localStorage.getItem('loggedNoteappUser');
+    if (loggedUserJSON) {
+      const user = JSON.parse(loggedUserJSON);
+      setUser(user);
+      noteService.setToken(user.token);
+    }
+  }, []);
+
   const addNote = event => {
     event.preventDefault();
     const noteObject = {
@@ -92,6 +101,8 @@ const App = () => {
         username,
         password,
       });
+      window.localStorage.setItem('loggedNoteappUser', JSON.stringify(user));
+      noteService.setToken(user.token);
       setUser(user);
       setUsername('');
       setPassword('');
@@ -138,8 +149,15 @@ const App = () => {
     <div>
       <h1>Notes</h1>
       {errorMessage !== '' && <Notification message={errorMessage} />}
-      {user === null && loginForm()}
-      {user !== null && noteForm()}
+      {user === null ? (
+        loginForm()
+      ) : (
+        <div>
+          <p>{user.name} logged-in</p>
+          {noteForm()}
+        </div>
+      )}
+
       <div>
         <button onClick={() => setShowAll(!showAll)}>
           show {showAll ? 'important' : 'all'}
@@ -155,10 +173,10 @@ const App = () => {
           />
         ))}
       </ul>
-      <form onSubmit={addNote}>
+      {/* <form onSubmit={addNote}>
         <input value={newNote} onChange={handleNoteChange} />
         <button type="submit">save</button>
-      </form>
+      </form> */}
       <Footer />
     </div>
   );
