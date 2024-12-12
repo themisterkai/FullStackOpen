@@ -3,7 +3,6 @@ const Note = require('../models/note');
 const User = require('../models/user');
 
 router.post('/reset', async (request, response) => {
-  console.log('*********reset');
   await Note.deleteMany({});
   await User.deleteMany({});
 
