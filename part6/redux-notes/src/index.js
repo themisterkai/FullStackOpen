@@ -3,7 +3,7 @@ import ReactDOM from 'react-dom/client';
 import { configureStore } from '@reduxjs/toolkit';
 import { Provider } from 'react-redux';
 import App from './App';
-import noteReducer from './reducers/noteReducer';
+import noteReducer, { setNotes } from './reducers/noteReducer';
 import filterReducer from './reducers/filterReducer';
 
 const store = configureStore({
@@ -30,6 +30,7 @@ const store = configureStore({
 //     id: 2
 //   }
 // })
+
 
 ReactDOM.createRoot(document.getElementById('root')).render(
   <Provider store={store}>
