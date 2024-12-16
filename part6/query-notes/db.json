@@ -13,7 +13,7 @@
     {
       "id": "4d9d",
       "content": "test",
-      "important": false
+      "important": true
     },
     {
       "id": "3486",
@@ -23,7 +23,7 @@
     {
       "id": "2133",
       "content": "test 4",
-      "important": false
+      "important": true
     },
     {
       "id": "7cfe",
@@ -33,12 +33,17 @@
     {
       "id": "d43b",
       "content": "Test 5",
-      "important": false
+      "important": true
     },
     {
       "id": "332f",
       "content": "Test 6",
-      "important": true
+      "important": false
+    },
+    {
+      "id": "bdea",
+      "content": "Test7",
+      "important": false
     }
   ]
 }
